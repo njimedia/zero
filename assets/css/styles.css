@@ -1,0 +1,6 @@
+body {
+  margin: 0px;
+}
+#toolbar {
+  display: none; /* let's remove this from the front end for now */
+}

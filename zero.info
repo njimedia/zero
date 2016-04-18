@@ -1,0 +1,16 @@
+name = Zero
+description = Zero out Drupal.
+core = 7.x
+regions[content] = Content
+regions[help] = Help
+regions[page_top] = Page Top
+regions[page_bottom] = Page Bottom
+regions[highlighted] = Highlighted
+regions[sidebar_first] = Sidebar First
+regions[sidebar_second] = Sidebar Second
+
+;css
+stylesheets[all][] = assets/css/styles.css
+
+;js
+scripts[] = assets/js/main.js
