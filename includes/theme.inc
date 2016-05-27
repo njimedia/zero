@@ -32,12 +32,63 @@ function zero_js_alter(&$js) {
   $js['misc/jquery.js']['version'] = '1.11.1';
   $js['misc/jquery.js']['type'] = 'external';
 
-  $exclude = array(
-    'settings' => FALSE,
-    'misc/jquery.js' => FALSE,
-    'misc/drupal.js' => FALSE,
-    'misc/jquery.once.js' => FALSE,
-  );
+  // $exclude = array(
+  //   'settings' => FALSE,
+  //   'misc/jquery.js' => FALSE,
+  //   'misc/drupal.js' => FALSE,
+  //   'misc/jquery.once.js' => FALSE,
+  // );
+  //
+  // $js = array_diff_key($js, $exclude);
+}
 
-  $js = array_diff_key($js, $exclude);
+/**
+ * Implements hook_menu_link().
+ */
+function zero_menu_link($vars) {
+  $element = $vars["element"];
+  $link = l($element["#title"], $element["#href"], $element["#localized_options"]);
+  $submenu = _zero_nested_menus($element);
+  return "<li" . drupal_attributes($element["#attributes"]) . ">" . $link . implode("\n", $submenu) . "</li>\n";
+}
+
+/**
+ * Implements hook_menu_tree().
+ */
+function zero_menu_tree(&$vars) {
+  return "<ul>" . $vars["tree"] . "</ul>";
+}
+
+/**
+ * Find all nested menus for a menu.
+ *
+ * @param array $element
+ *   Element array.
+ *
+ * @return string
+ *   Submenu with nested submenus.
+ */
+function _zero_nested_menus($element) {
+
+  $submenu = array();
+
+  // If below add below and recurse.
+  if (!empty($element["#below"])) {
+    unset($element["#below"]["#sorted"]);
+    unset($element["#below"]["#theme_wrappers"]);
+    $submenu[] = "<ul>";
+    foreach ($element["#below"] as $key => $value) {
+      $subsubmenu = _zero_nested_menus($value);
+      if (!empty($subsubmenu)) {
+        $submenu[] = "<li>" . l($value["#title"], $value["#href"], $value["#localized_options"]) . implode("\n", $subsubmenu) . "</li>";
+      }
+      else {
+        $submenu[] = "<li>" . l($value["#title"], $value["#href"], $value["#localized_options"]) . "</li>";
+      }
+    }
+    $submenu[] = "</ul>";
+  }
+
+  return $submenu;
+
 }
